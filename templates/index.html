@@ -43,21 +43,20 @@
     <i class="header-toggle d-xl-none bi bi-list"></i>
 
     <div class="profile-img">
-      <img src="{% static "assets/img/my-profile-img.jpg" %}" alt="" class="img-fluid rounded-circle">
+      <img src="{% static "assets/img/profile.jpg" %}" alt="" class="img-fluid rounded-circle">
     </div>
 
-    <a href="index.html" class="logo d-flex align-items-center justify-content-center">
+    <a href="{% url "app:home" %}" class="logo d-flex align-items-center justify-content-center">
       <!-- Uncomment the line below if you also wish to use an image logo -->
       <!-- <img src="assets/img/logo.png" alt=""> -->
-      <h1 class="sitename">Alex Smith</h1>
+      <h1 class="sitename">Reza Derakhshan</h1>
     </a>
 
     <div class="social-links text-center">
-      <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-      <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-      <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-      <a href="#" class="google-plus"><i class="bi bi-skype"></i></a>
-      <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+      <a href="https://github.com/rezadrakhshan" class="twitter"><i class="bi bi-github"></i></a>
+      <a href="https://t.me/Reza_OfficiaI" class="instagram"><i class="bi bi-telegram"></i></a>
+      <a href="mailto:rezaderakhshan.dev@gmail.com" class="google-plus"><i class="bi bi-google"></i></a>
+      <a href="linkedin.com/in/seyedrezadrakhshan" class="linkedin"><i class="bi bi-linkedin"></i></a>
     </div>
 
     <nav id="navmenu" class="navmenu">
@@ -97,9 +96,9 @@
 
       <img src="{% static "assets/img/hero-bg.jpg" %}" alt="" data-aos="fade-in" class="">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <h2>Alex Smith</h2>
-        <p>I'm <span class="typed" data-typed-items="Designer, Developer, Freelancer, Photographer">Designer</span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span></p>
+      <div class="container" data-aos="fade-up" data-aos-delay="100" style="text-align: center;">
+        <h2>Seyed Reza Derakhshan</h2>
+        <p>I'm <span class="typed" data-typed-items="BackEnd Developer, Freelancer, Server-side Engineer, API Developer">Developer</span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span></p>
       </div>
 
     </section><!-- /Hero Section -->
@@ -110,7 +109,7 @@
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h2>About</h2>
-        <p>Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+        <p>I'm Seyed Reza Derakhshan, an 18-year-old backend developer from Shahriar, recently graduated from the 12th grade. Over the past three years, I started my programming journey with Python, building projects using powerful frameworks like Django and FastAPI.</p>
       </div><!-- End Section Title -->
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
@@ -120,32 +119,30 @@
             <img src="{% static "assets/img/my-profile-img.jpg" %}" class="img-fluid" alt="">
           </div>
           <div class="col-lg-8 content">
-            <h2>UI/UX Designer &amp; Web Developer.</h2>
+            <h2>Beckend Developer &amp; Server-side Engineer.</h2>
             <p class="fst-italic py-3">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-              magna aliqua.
+              Later, I expanded into JavaScript and Node.js, gaining hands-on experience with frameworks such as Express and Socket.IO. Currently, I’m focusing on TypeScript and mastering the structured NestJS framework to build scalable and maintainable backend systems.
             </p>
             <div class="row">
               <div class="col-lg-6">
                 <ul>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Birthday:</strong> <span>1 May 1995</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Website:</strong> <span>www.example.com</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Phone:</strong> <span>+123 456 7890</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>City:</strong> <span>New York, USA</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Birthday:</strong> <span>8 May 2007</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Website:</strong> <span>reza-derakhshan.ir</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Phone:</strong> <span>+98 937 139 4249</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>City:</strong> <span>Shahriar, IR</span></li>
                 </ul>
               </div>
               <div class="col-lg-6">
                 <ul>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Age:</strong> <span>30</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Degree:</strong> <span>Master</span></li>
-                  <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>email@example.com</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Age:</strong> <span>18</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Degree:</strong> <span>High School Diploma</span></li>
+                  <li><i class="bi bi-chevron-right"></i> <strong>Email:</strong> <span>rezaderakhshan.dev@gmail.com</span></li>
                   <li><i class="bi bi-chevron-right"></i> <strong>Freelance:</strong> <span>Available</span></li>
                 </ul>
               </div>
             </div>
             <p class="py-3">
-              Officiis eligendi itaque labore et dolorum mollitia officiis optio vero. Quisquam sunt adipisci omnis et ut. Nulla accusantium dolor incidunt officia tempore. Et eius omnis.
-              Cupiditate ut dicta maxime officiis quidem quia. Sed et consectetur qui quia repellendus itaque neque.
+              My passion lies in writing clean, efficient, and secure code, following professional development principles, and collaborating on real-world, team-based projects. I’m committed to continuous learning and pushing my skills to the next level.
             </p>
           </div>
         </div>
