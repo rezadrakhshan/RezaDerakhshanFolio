@@ -20,12 +20,29 @@ class Experience(models.Model):
     company = models.CharField(max_length=100)
     years = DateRangeField()
     tasks = ArrayField(models.TextField(), size=3)
-    
+
     @property
     def years_display(self):
         start = self.years.lower.year
         end = "Present" if not self.years.upper else self.years.upper.year
         return f"{start} - {end}"
-    
+
     def __str__(self):
         return self.company
+
+
+class Eduction(models.Model):
+    degree = models.CharField(max_length=100)
+    field = models.CharField(max_length=100)
+    years = DateRangeField()
+    Institute = models.CharField(max_length=150)
+    description = models.TextField()
+
+    @property
+    def years_display(self):
+        start = self.years.lower.year
+        end = "Present" if not self.years.upper else self.years.upper.year
+        return f"{start} - {end}"
+
+    def __str__(self):
+        return self.degree
