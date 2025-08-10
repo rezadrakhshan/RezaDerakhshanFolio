@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Skills, Experience, Eduction
+from .models import Skills, Experience, Eduction, Testimonial
 
 # Register your models here.
 
@@ -7,3 +7,4 @@ from .models import Skills, Experience, Eduction
 admin.site.register(Skills)
 admin.site.register(Experience)
 admin.site.register(Eduction)
+admin.site.register(Testimonial)
