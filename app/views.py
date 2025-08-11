@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Skills, Experience, Eduction, Testimonial
+from .models import Skills, Experience, Eduction, Testimonial, Project, Category
 from math import ceil
 from django.core.mail import send_mail
 from django.conf import settings
@@ -13,6 +13,8 @@ def home(request):
     experience = Experience.objects.all()
     education = Eduction.objects.all()
     testimonial = Testimonial.objects.all()
+    category = Category.objects.all()
+    project = Project.objects.all()
     half = ceil(len(skills) / 2)
     skills_left = skills[:half]
     skills_right = skills[half:]
@@ -25,6 +27,8 @@ def home(request):
             "experiences": experience,
             "educations": education,
             "testimonials": testimonial,
+            "categories": category,
+            "projects": project,
         },
     )
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.postgres.fields import DateRangeField, ArrayField
+import uuid
 
 # Create your models here.
 
@@ -51,5 +52,26 @@ class Eduction(models.Model):
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
-    profile = models.ImageField(upload_to="media/")
+    profile = models.ImageField(upload_to="media/testimonial/")
     comment = models.TextField()
+
+
+class Category(models.Model):
+    title = models.CharField(max_length=100)
+    slug = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Project(models.Model):
+    category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    client = models.CharField(max_length=100)
+    date = models.DateField()
+    url = models.URLField(null=True, blank=True)
+    image = models.ImageField(upload_to="media/project/")
+
+    def __str__(self):
+        return self.title
