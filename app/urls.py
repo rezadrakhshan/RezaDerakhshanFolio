@@ -3,4 +3,7 @@ from . import views
 
 app_name = "app"
 
-urlpatterns = [path("", views.home, name="home")]
+urlpatterns = [
+    path("", views.home, name="home"),
+    path("send-mail", views.send_mail_page, name="send-mail"),
+]
