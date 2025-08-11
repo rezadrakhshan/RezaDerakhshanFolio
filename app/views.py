@@ -60,3 +60,9 @@ def send_mail_page(request):
             return JsonResponse(
                 {"status": "error", "message": "All fields are required"}
             )
+
+
+def project_detail(request, slug):
+    target = Project.objects.get(slug=slug)
+
+    return render(request, "project_detail.html", {"target": target})
