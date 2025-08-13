@@ -99,7 +99,9 @@
                 <li><strong>Category</strong>: {{target.category.title}}</li>
                 <li><strong>Client</strong>: {{target.client}}</li>
                 <li><strong>Project date</strong>: {{target.date}}</li>
-                <li><strong>Project URL</strong>: <a href="{{target.url}}">{{tarad.url}}</a></li>
+                {% if target.url %}
+                <li><strong>Project URL</strong>: <a href="{{target.url}}">{{target.url}}</a></li>
+                {% endif %}
               </ul>
             </div>
             <div class="portfolio-description" data-aos="fade-up" data-aos-delay="300">

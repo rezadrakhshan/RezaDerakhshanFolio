@@ -148,6 +148,7 @@
 
     </section><!-- /Stats Section --> {% endcomment %}
 
+    {% if skills_left or skills_right  %}
     <!-- Skills Section -->
     <section id="skills" class="skills section light-background">
 
@@ -185,7 +186,9 @@
         </div>
       </div>
     </section><!-- /Skills Section -->
+    {% endif %}
 
+    {% if educations or experiences %}
     <!-- Resume Section -->
     <section id="resume" class="resume section">
 
@@ -233,7 +236,9 @@ This resume outlines the milestones that have shaped my career so far.</p>
       </div>
 
     </section><!-- /Resume Section -->
+    {% endif %}
 
+    {% if projects %}
     <!-- Portfolio Section -->
     <section id="portfolio" class="portfolio section light-background">
 
@@ -277,6 +282,7 @@ Take a closer look at what I’ve been building.</p>
       </div>
 
     </section><!-- /Portfolio Section -->
+    {% endif %}
 
     <!-- Services Section -->
     {% comment %} <section id="services" class="services section">
@@ -346,6 +352,7 @@ Take a closer look at what I’ve been building.</p>
 
     </section><!-- /Services Section --> {% endcomment %}
 
+    {% if testimonials %}
     <!-- Testimonials Section -->
     <section id="testimonials" class="testimonials section light-background">
 
@@ -407,6 +414,7 @@ Their words reflect the passion, professionalism, and results I bring to every p
       </div>
 
     </section><!-- /Testimonials Section -->
+    {% endif %}
 
     <!-- Contact Section -->
     <section id="contact" class="contact section">
