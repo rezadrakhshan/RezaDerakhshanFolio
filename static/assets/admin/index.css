@@ -1,0 +1,66 @@
+body {
+  background: url("../img/hero-bg.jpg") center center/cover no-repeat;
+  min-height: 100vh;
+  font-family: "Poppins", "Roboto", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-panel-card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(31, 38, 135, 0.12);
+  padding: 2rem 1.5rem;
+  max-width: 400px;
+  width: 100%;
+  transition: box-shadow 0.2s;
+}
+.admin-panel-card:hover {
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+}
+.admin-panel-title {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
+  color: #222;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.admin-panel-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+}
+.admin-panel-list li {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  background: #f4f6fb;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.admin-panel-list li:hover {
+  background: #e9ecef;
+  box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+}
+
+a{
+  color: black;
+}
+
+.admin-panel-list i {
+  font-size: 1.2rem;
+  color: black;
+  margin-right: 0.7rem;
+}
+@media (max-width: 576px) {
+  .admin-panel-card {
+    padding: 1rem 0.3rem;
+  }
+  .admin-panel-title {
+    font-size: 1.3rem;
+  }
+}

@@ -64,10 +64,6 @@ class Category(models.Model):
         return self.title
 
 
-class Images(models.Model):
-    image = models.ImageField(upload_to="media/project/")
-
-
 class Project(models.Model):
     category = models.ForeignKey("Category", on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
@@ -75,7 +71,7 @@ class Project(models.Model):
     client = models.CharField(max_length=100)
     date = models.DateField()
     url = models.URLField(null=True, blank=True)
-    image = models.ManyToManyField("Images")
+    images_url = ArrayField(models.URLField(), size=5, blank=True, default=list)
     slug = models.UUIDField(default=uuid.uuid4, primary_key=True, unique=True)
 
     def __str__(self):
