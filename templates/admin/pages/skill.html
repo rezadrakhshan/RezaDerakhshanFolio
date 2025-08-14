@@ -1,0 +1,214 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Manage Skills | Admin Panel</title>
+    <link
+      href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    />
+    <link
+      href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}"
+      rel="stylesheet"
+    />
+    <link href="{% static 'assets/css/main.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/admin/index.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/admin/pages.css' %}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="skill-panel-card">
+      <a
+        href="{% url 'dashboard:index' %}"
+        class="btn btn-outline-primary back-btn"
+        ><i class="bi bi-arrow-left"></i> Back to Home</a
+      >
+      <div class="skill-panel-title">Manage Skills</div>
+      <div class="d-flex justify-content-end mb-3">
+        <button
+          class="btn btn-success"
+          data-bs-toggle="modal"
+          data-bs-target="#createSkillModal"
+        >
+          <i class="bi bi-plus-circle"></i> Create Skill
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Percentage</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for skill in skills %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ skill.title }}</td>
+              <td>{{ skill.percentage }}%</td>
+              <td class="action-btns">
+                <button
+                  class="btn btn-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editSkillModal{{ skill.id }}"
+                >
+                  <i class="bi bi-pencil-square"></i> Edit
+                </button>
+                <form method="post" action="{% url "dashboard:skill-delete" skill.id %}" style="display: inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i> Remove
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <!-- Edit Modal -->
+            <div
+              class="modal fade"
+              id="editSkillModal{{ skill.id }}"
+              tabindex="-1"
+              aria-labelledby="editSkillLabel{{ skill.id }}"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form method="post" action="{% url "dashboard:skill-edit" skill.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="editSkillLabel{{ skill.id }}">
+                        Edit Skill
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="skillTitle{{ skill.id }}" class="form-label"
+                          >Title</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="skillTitle{{ skill.id }}"
+                          name="title"
+                          value="{{ skill.title }}"
+                          required
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <label
+                          for="skillPercentage{{ skill.id }}"
+                          class="form-label"
+                          >Percentage</label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="skillPercentage{{ skill.id }}"
+                          name="percentage"
+                          value="{{ skill.percentage }}"
+                          min="0"
+                          max="100"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Cancel
+                      </button>
+                      <button type="submit" class="btn btn-primary">
+                        Update
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Create Modal -->
+      <div
+        class="modal fade"
+        id="createSkillModal"
+        tabindex="-1"
+        aria-labelledby="createSkillLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form method="post" action="{% url "dashboard:skill-create" %}">
+              {% csrf_token %}
+              <div class="modal-header">
+                <h5 class="modal-title" id="createSkillLabel">Create Skill</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="newSkillTitle" class="form-label">Title</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newSkillTitle"
+                    name="title"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="newSkillPercentage" class="form-label"
+                    >Percentage</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="newSkillPercentage"
+                    name="percentage"
+                    min="0"
+                    max="100"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button type="submit" class="btn btn-success">Create</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  </body>
+</html>
