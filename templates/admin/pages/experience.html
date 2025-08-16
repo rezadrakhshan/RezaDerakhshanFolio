@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Manage Skills | Admin Panel</title>
+    <title>Manage Experience | Admin Panel</title>
     <link
       href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}"
       rel="stylesheet"
@@ -25,20 +25,30 @@
   </head>
   <body>
     <div class="skill-panel-card">
+      {% if messages %}
+      <div class="notification-box mb-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
       <a
         href="{% url 'dashboard:index' %}"
         class="btn btn-outline-primary back-btn"
         ><i class="bi bi-arrow-left"></i> Back to Home</a
       >
-      <div class="skill-panel-title">Manage Skills</div>
+      <div class="skill-panel-title">Manage Experience</div>
       <div class="d-flex justify-content-between align-items-center mb-3">
         <div></div>
         <button
           class="btn btn-success"
           data-bs-toggle="modal"
-          data-bs-target="#createSkillModal"
+          data-bs-target="#createExperienceModal"
         >
-          <i class="bi bi-plus-circle"></i> Create Skill
+          <i class="bi bi-plus-circle"></i> Create Experience
         </button>
       </div>
       <div class="table-responsive">
@@ -46,26 +56,36 @@
           <thead class="table-light">
             <tr>
               <th>#</th>
-              <th>Title</th>
-              <th>Percentage</th>
+              <th>Position</th>
+              <th>Company</th>
+              <th>Years</th>
+              <th>Tasks</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {% for skill in skills %}
+            {% for experience in experiences %}
             <tr>
               <td>{{ forloop.counter }}</td>
-              <td>{{ skill.title }}</td>
-              <td>{{ skill.percentage }}%</td>
+              <td>{{ experience.position }}</td>
+              <td>{{ experience.company }}</td>
+              <td>{{ experience.years_display }}</td>
+              <td>
+                <ul class="mb-0">
+                  {% for task in experience.tasks %}
+                  <li>{{ task }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
               <td class="action-btns d-flex justify-content-center gap-2">
                 <button
                   class="btn btn-primary btn-sm"
                   data-bs-toggle="modal"
-                  data-bs-target="#editSkillModal{{ skill.id }}"
+                  data-bs-target="#editExperienceModal{{ experience.id }}"
                 >
                   <i class="bi bi-pencil-square"></i> Edit
                 </button>
-                <form method="post" action="{% url "dashboard:skill-delete" skill.id %}" style="display: inline">
+                <form method="post" action="{% url "dashboard:experience-delete" experience.id %}" style="display: inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-danger btn-sm">
                     <i class="bi bi-trash"></i> Remove
@@ -76,18 +96,18 @@
             <!-- Edit Modal -->
             <div
               class="modal fade"
-              id="editSkillModal{{ skill.id }}"
+              id="editExperienceModal{{ experience.id }}"
               tabindex="-1"
-              aria-labelledby="editSkillLabel{{ skill.id }}"
+              aria-labelledby="editExperienceLabel{{ experience.id }}"
               aria-hidden="true"
             >
               <div class="modal-dialog">
                 <div class="modal-content">
-                  <form method="post" action="{% url "dashboard:skill-edit" skill.id %}">
+                  <form method="post" action="{% url "dashboard:experience-edit" experience.id %}">
                     {% csrf_token %}
                     <div class="modal-header">
-                      <h5 class="modal-title" id="editSkillLabel{{ skill.id }}">
-                        Edit Skill
+                      <h5 class="modal-title" id="editExperienceLabel{{ experience.id }}">
+                        Edit Experience
                       </h5>
                       <button
                         type="button"
@@ -98,32 +118,54 @@
                     </div>
                     <div class="modal-body">
                       <div class="mb-3">
-                        <label for="skillTitle{{ skill.id }}" class="form-label"
-                          >Title</label
+                        <label for="experiencePosition{{ experience.id }}" class="form-label"
+                          >Position</label
                         >
                         <input
                           type="text"
                           class="form-control"
-                          id="skillTitle{{ skill.id }}"
-                          name="title"
-                          value="{{ skill.title }}"
+                          id="experiencePosition{{ experience.id }}"
+                          name="position"
+                          value="{{ experience.position }}"
                           required
                         />
                       </div>
                       <div class="mb-3">
-                        <label
-                          for="skillPercentage{{ skill.id }}"
-                          class="form-label"
-                          >Percentage</label
+                        <label for="experienceCompany{{ experience.id }}" class="form-label"
+                          >Company</label
                         >
                         <input
-                          type="number"
+                          type="text"
                           class="form-control"
-                          id="skillPercentage{{ skill.id }}"
-                          name="percentage"
-                          value="{{ skill.percentage }}"
-                          min="0"
-                          max="100"
+                          id="experienceCompany{{ experience.id }}"
+                          name="company"
+                          value="{{ experience.company }}"
+                          required
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <label for="experienceYears{{ experience.id }}" class="form-label"
+                          >Years (e.g. 2020 - 2023)</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="experienceYears{{ experience.id }}"
+                          name="years"
+                          value="{{ experience.years_display }}"
+                          required
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <label for="experienceTasks{{ experience.id }}" class="form-label"
+                          >Tasks (comma separated)</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="experienceTasks{{ experience.id }}"
+                          name="tasks"
+                          value="{{ experience.tasks|join:", " }}"
                           required
                         />
                       </div>
@@ -151,17 +193,17 @@
       <!-- Create Modal -->
       <div
         class="modal fade"
-        id="createSkillModal"
+        id="createExperienceModal"
         tabindex="-1"
-        aria-labelledby="createSkillLabel"
+        aria-labelledby="createExperienceLabel"
         aria-hidden="true"
       >
         <div class="modal-dialog">
           <div class="modal-content">
-            <form method="post" action="{% url "dashboard:skill-create" %}">
+            <form method="post" action="{% url "dashboard:experience-create" %}">
               {% csrf_token %}
               <div class="modal-header">
-                <h5 class="modal-title" id="createSkillLabel">Create Skill</h5>
+                <h5 class="modal-title" id="createExperienceLabel">Create Experience</h5>
                 <button
                   type="button"
                   class="btn-close"
@@ -171,26 +213,42 @@
               </div>
               <div class="modal-body">
                 <div class="mb-3">
-                  <label for="newSkillTitle" class="form-label">Title</label>
+                  <label for="newExperiencePosition" class="form-label">Position</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="newSkillTitle"
-                    name="title"
+                    id="newExperiencePosition"
+                    name="position"
                     required
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="newSkillPercentage" class="form-label"
-                    >Percentage</label
-                  >
+                  <label for="newExperienceCompany" class="form-label">Company</label>
                   <input
-                    type="number"
+                    type="text"
                     class="form-control"
-                    id="newSkillPercentage"
-                    name="percentage"
-                    min="0"
-                    max="100"
+                    id="newExperienceCompany"
+                    name="company"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="newExperienceYears" class="form-label">Years (e.g. 2020-2023)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newExperienceYears"
+                    name="years"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="newExperienceTasks" class="form-label">Tasks (comma separated)</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="newExperienceTasks"
+                    name="tasks"
                     required
                   />
                 </div>

@@ -77,3 +77,67 @@ def skill_delete_page(request, skill_id):
         skill.delete()
         messages.success(request, "Skill deleted successfully")
         return redirect("dashboard:skills")
+
+
+@login_required(login_url="dashboard:login")
+def experience_page(request):
+    experiences = Experience.objects.all()
+    return render(request, "admin/pages/experience.html", {"experiences": experiences})
+
+
+@login_required(login_url="dashboard:login")
+def experience_create_page(request):
+    if request.method == "POST":
+        position = request.POST.get("position")
+        company = request.POST.get("company")
+        years = request.POST.get("years")
+        tasks = request.POST.get("tasks")
+
+        years_format = years.split("-")
+        years = [f"{y.strip()}-01-01" for y in years_format]
+        if len(years) != 2:
+            messages.info(request, "Years must be in the format YYYY - YYYY")
+            return redirect("dashboard:experiences")
+        tasks = tasks.split(",") if tasks else []
+        if position and company and years and tasks:
+            experience = Experience(
+                position=position, company=company, years=years, tasks=tasks
+            )
+            experience.save()
+            messages.success(request, "Experience created successfully")
+            return redirect("dashboard:experiences")
+
+    return redirect("dashboard:experiences")
+
+
+@login_required(login_url="dashboard:login")
+def experience_edit_page(request, experience_id):
+    experience = Experience.objects.get(id=experience_id)
+    if request.method == "POST":
+        position = request.POST.get("position")
+        company = request.POST.get("company")
+        years = request.POST.get("years")
+        tasks = request.POST.get("tasks")
+        years_format = years.split("-")
+        years = [f"{y.strip()}-01-01" for y in years_format]
+        if len(years) != 2:
+            messages.info(request, "Years must be in the format YYYY - YYYY")
+            return redirect("dashboard:experiences")
+        tasks = tasks.split(",") if tasks else []
+        if position and company and years and tasks:
+            experience.position = position
+            experience.company = company
+            experience.years = years
+            experience.tasks = tasks
+            experience.save()
+            messages.success(request, "Experience updated successfully")
+            return redirect("dashboard:experiences")
+
+
+@login_required(login_url="dashboard:login")
+def experience_delete_page(request, experience_id):
+    experience = Experience.objects.get(id=experience_id)
+    if request.method == "POST":
+        experience.delete()
+        messages.success(request, "Experience deleted successfully")
+        return redirect("dashboard:experiences")
