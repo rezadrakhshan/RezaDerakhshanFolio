@@ -13,7 +13,7 @@
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body> 
     <div class="admin-panel-card">
       <div class="admin-panel-title">Admin Dashboard</div>
       <ul class="admin-panel-list">
@@ -22,7 +22,7 @@
         <li><a href="{% url "dashboard:experiences" %}"><i class="bi bi-briefcase"></i> Manage Experience</a></li>
         <li><a href="{% url "dashboard:educations" %}"><i class="bi bi-mortarboard"></i> Manage Education</a></li>
         <li><a href="#"><i class="bi bi-chat-left-quote"></i> Manage Testimonial</a></li>
-        <li><a href="#"><i class="bi bi-tags"></i> Manage Category</a></li>
+        <li><a href="{% url "dashboard:categories" %}"><i class="bi bi-tags"></i> Manage Category</a></li>
         <li><a href="#"><i class="bi bi-kanban"></i> Manage Project</a></li>
         <li><a href="{% url "dashboard:logout" %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
       </ul>

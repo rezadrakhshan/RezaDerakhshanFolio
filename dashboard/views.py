@@ -208,3 +208,40 @@ def education_delete_page(request, education_id):
         education.delete()
         messages.success(request, "Education deleted successfully")
         return redirect("dashboard:educations")
+
+@login_required(login_url="dashboard:login")
+def category_page(request):
+    categories = Category.objects.all()
+    return render(request, "admin/pages/category.html", {"categories": categories})
+
+@login_required(login_url="dashboard:login")
+def category_create_page(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        if title:
+            category = Category(title=title)
+            category.save()
+            messages.success(request, "Category created successfully")
+            return redirect("dashboard:categories")
+        else:
+            messages.error(request, "Title is required")
+            return redirect("dashboard:category-create")
+        
+@login_required(login_url="dashboard:login")
+def category_edit_page(request, category_id):
+    category = Category.objects.get(slug=category_id)
+    if request.method == "POST":
+        title = request.POST.get("title")
+        if title:
+            category.title = title
+            category.save()
+            messages.success(request, "Category updated successfully")
+            return redirect("dashboard:categories")
+        
+@login_required(login_url="dashboard:login")
+def category_delete_page(request, category_id):
+    category = Category.objects.get(slug=category_id)
+    if request.method == "POST":
+        category.delete()
+        messages.success(request, "Category deleted successfully")
+        return redirect("dashboard:categories")

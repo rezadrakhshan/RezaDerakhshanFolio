@@ -19,4 +19,8 @@ urlpatterns = [
     path("educations/create/", views.education_create_page, name="education-create"),
     path("educations/edit/<int:education_id>/", views.education_edit_page, name="education-edit"),
     path("educations/delete/<int:education_id>/", views.education_delete_page, name="education-delete"),
+    path("categories/", views.category_page, name="categories"),
+    path("categories/create/", views.category_create_page, name="category-create"),
+    path("categories/edit/<str:category_id>/", views.category_edit_page, name="category-edit"),
+    path("categories/delete/<str:category_id>/", views.category_delete_page, name="category-delete"),
 ]
