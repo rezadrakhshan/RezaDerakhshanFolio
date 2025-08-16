@@ -144,6 +144,10 @@
                 </div>
               </div>
             </div>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center">No skills found.</td> 
+            </tr>
             {% endfor %}
           </tbody>
         </table>

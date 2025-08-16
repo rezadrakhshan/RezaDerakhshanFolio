@@ -15,4 +15,8 @@ urlpatterns = [
     path("experiences/create/", views.experience_create_page, name="experience-create"),
     path("experiences/edit/<int:experience_id>/", views.experience_edit_page, name="experience-edit"),
     path("experiences/delete/<int:experience_id>/", views.experience_delete_page, name="experience-delete"),
+    path("educations/", views.education_page, name="educations"),
+    path("educations/create/", views.education_create_page, name="education-create"),
+    path("educations/edit/<int:education_id>/", views.education_edit_page, name="education-edit"),
+    path("educations/delete/<int:education_id>/", views.education_delete_page, name="education-delete"),
 ]

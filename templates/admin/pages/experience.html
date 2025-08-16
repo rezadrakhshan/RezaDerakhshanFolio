@@ -186,6 +186,10 @@
                 </div>
               </div>
             </div>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center">No experience records found.</td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>

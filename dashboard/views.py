@@ -141,3 +141,70 @@ def experience_delete_page(request, experience_id):
         experience.delete()
         messages.success(request, "Experience deleted successfully")
         return redirect("dashboard:experiences")
+
+
+@login_required(login_url="dashboard:login")
+def education_page(request):
+    educations = Eduction.objects.all()
+    return render(request, "admin/pages/education.html", {"educations": educations})
+
+
+@login_required(login_url="dashboard:login")
+def education_create_page(request):
+    if request.method == "POST":
+        degree = request.POST.get("degree")
+        field = request.POST.get("field")
+        institution = request.POST.get("Institute")
+        years = request.POST.get("years")
+        description = request.POST.get("description")
+
+        years_format = years.split("-")
+        years = [f"{y.strip()}-01-01" for y in years_format]
+        if len(years) != 2:
+            messages.info(request, "Years must be in the format YYYY - YYYY")
+            return redirect("dashboard:educations")
+        if degree and field and institution and years and description:
+            education = Eduction(
+                degree=degree,
+                field=field,
+                Institute=institution,
+                years=years,
+                description=description,
+            )
+            education.save()
+            messages.success(request, "Education created successfully")
+            return redirect("dashboard:educations")
+
+
+@login_required(login_url="dashboard:login")
+def education_edit_page(request, education_id):
+    education = Eduction.objects.get(id=education_id)
+    if request.method == "POST":
+        degree = request.POST.get("degree")
+        field = request.POST.get("field")
+        institution = request.POST.get("Institute")
+        years = request.POST.get("years")
+        description = request.POST.get("description")
+        years_format = years.split("-")
+        years = [f"{y.strip()}-01-01" for y in years_format]
+        if len(years) != 2:
+            messages.info(request, "Years must be in the format YYYY - YYYY")
+            return redirect("dashboard:educations")
+        if degree and field and institution and years and description:
+            education.degree = degree
+            education.field = field
+            education.Institute = institution
+            education.years = years
+            education.description = description
+            education.save()
+            messages.success(request, "Education updated successfully")
+            return redirect("dashboard:educations")
+
+
+@login_required(login_url="dashboard:login")
+def education_delete_page(request, education_id):
+    education = Eduction.objects.get(id=education_id)
+    if request.method == "POST":
+        education.delete()
+        messages.success(request, "Education deleted successfully")
+        return redirect("dashboard:educations")
