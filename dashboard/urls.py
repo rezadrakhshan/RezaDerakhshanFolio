@@ -23,4 +23,8 @@ urlpatterns = [
     path("categories/create/", views.category_create_page, name="category-create"),
     path("categories/edit/<str:category_id>/", views.category_edit_page, name="category-edit"),
     path("categories/delete/<str:category_id>/", views.category_delete_page, name="category-delete"),
+    path("testimonials/", views.testimonial_page, name="testimonials"),
+    path("testimonials/create/", views.testimonial_create_page, name="testimonial-create"),
+    path("testimonials/edit/<int:testimonial_id>/", views.testimonial_edit_page, name="testimonial-edit"),
+    path("testimonials/delete/<int:testimonial_id>/", views.testimonial_delete_page, name="testimonial-delete"),
 ]

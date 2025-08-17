@@ -52,7 +52,7 @@ class Eduction(models.Model):
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
-    profile = models.ImageField(upload_to="media/testimonial/")
+    profile = models.URLField()
     comment = models.TextField()
 
 

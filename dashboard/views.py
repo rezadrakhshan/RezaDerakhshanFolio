@@ -2,8 +2,22 @@ from django.shortcuts import render, redirect
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from app.models import *
+import boto3
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import uuid
 
 # Create your views here.
+
+
+def get_s3_client():
+    return boto3.client(
+        "s3",
+        endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
 
 
 @login_required(login_url="dashboard:login")
@@ -209,10 +223,12 @@ def education_delete_page(request, education_id):
         messages.success(request, "Education deleted successfully")
         return redirect("dashboard:educations")
 
+
 @login_required(login_url="dashboard:login")
 def category_page(request):
     categories = Category.objects.all()
     return render(request, "admin/pages/category.html", {"categories": categories})
+
 
 @login_required(login_url="dashboard:login")
 def category_create_page(request):
@@ -226,7 +242,8 @@ def category_create_page(request):
         else:
             messages.error(request, "Title is required")
             return redirect("dashboard:category-create")
-        
+
+
 @login_required(login_url="dashboard:login")
 def category_edit_page(request, category_id):
     category = Category.objects.get(slug=category_id)
@@ -237,7 +254,8 @@ def category_edit_page(request, category_id):
             category.save()
             messages.success(request, "Category updated successfully")
             return redirect("dashboard:categories")
-        
+
+
 @login_required(login_url="dashboard:login")
 def category_delete_page(request, category_id):
     category = Category.objects.get(slug=category_id)
@@ -245,3 +263,109 @@ def category_delete_page(request, category_id):
         category.delete()
         messages.success(request, "Category deleted successfully")
         return redirect("dashboard:categories")
+
+
+@login_required(login_url="dashboard:login")
+def testimonial_page(request):
+    testimonials = Testimonial.objects.all()
+    return render(
+        request, "admin/pages/testimonial.html", {"testimonials": testimonials}
+    )
+
+
+@csrf_exempt
+@login_required(login_url="dashboard:login")
+def testimonial_create_page(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        position = request.POST.get("position")
+        profile_image = request.FILES.get("profile")
+        comment = request.POST.get("comment")
+
+        if name and position and profile_image and comment:
+            try:
+                s3_client = get_s3_client()
+                file_name = f"testimonials/{uuid.uuid4()}_{profile_image.name}"
+
+                s3_client.upload_fileobj(
+                    profile_image, settings.AWS_STORAGE_BUCKET_NAME, file_name
+                )
+
+                file_url = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/{file_name}"
+
+                testimonial = Testimonial(
+                    name=name, position=position, profile=file_url, comment=comment
+                )
+                testimonial.save()
+                messages.success(request, "Testimonial created successfully")
+                return redirect("dashboard:testimonials")
+
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+
+
+@login_required(login_url="dashboard:login")
+def testimonial_edit_page(request, testimonial_id):
+    testimonial = Testimonial.objects.get(id=testimonial_id)
+    if request.method == "POST":
+        name = request.POST.get("name")
+        position = request.POST.get("position")
+        profile_image = request.FILES.get("profile")
+        comment = request.POST.get("comment")
+
+        if name and position and comment:
+            try:
+                if profile_image:
+                    s3_client = get_s3_client()
+                    file_url = testimonial.profile
+                    bucket_prefix = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/"
+
+                    file_key = file_url.replace(bucket_prefix, "")
+
+                    s3_client.delete_object(
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                        Key=file_key
+                    )
+
+
+                    file_name = f"testimonials/{uuid.uuid4()}_{profile_image.name}"
+
+                    s3_client.upload_fileobj(
+                        profile_image, settings.AWS_STORAGE_BUCKET_NAME, file_name
+                    )
+
+                    file_url = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/{file_name}"
+                    testimonial.profile = file_url
+
+                testimonial.name = name
+                testimonial.position = position
+                testimonial.comment = comment
+                testimonial.save()
+                messages.success(request, "Testimonial updated successfully")
+                return redirect("dashboard:testimonials")
+
+            except Exception as e:
+                return JsonResponse({"error": str(e)}, status=500)
+
+@login_required(login_url="dashboard:login")
+def testimonial_delete_page(request, testimonial_id):
+    testimonial = Testimonial.objects.get(id=testimonial_id)
+    if request.method == "POST":
+        try:
+            s3_client = get_s3_client()
+            file_url = testimonial.profile
+            bucket_prefix = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/"
+
+            file_key = file_url.replace(bucket_prefix, "")
+
+            s3_client.delete_object(
+                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                Key=file_key
+            )
+
+            testimonial.delete()
+            messages.success(request, "Testimonial deleted successfully")
+            return redirect("dashboard:testimonials")
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)

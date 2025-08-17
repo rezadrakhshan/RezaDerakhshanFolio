@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<title>Manage Testimonial | Admin Panel</title>
+		<link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+		<link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+		<link href="{% static 'assets/css/main.css' %}" rel="stylesheet" />
+		<link href="{% static 'assets/admin/index.css' %}" rel="stylesheet" />
+		<link href="{% static 'assets/admin/pages.css' %}" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com" rel="preconnect" />
+		<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+	</head>
+	<body>
+		<div class="skill-panel-card">
+			{% if messages %}
+			<div class="notification-box mb-3">
+				{% for message in messages %}
+					<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endfor %}
+			</div>
+			{% endif %}
+			<a href="{% url 'dashboard:index' %}" class="btn btn-outline-primary back-btn">
+				<i class="bi bi-arrow-left"></i> Back to Home
+			</a>
+			<div class="skill-panel-title">Manage Testimonial</div>
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<div></div>
+				<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestimonialModal">
+					<i class="bi bi-plus-circle"></i> Create Testimonial
+				</button>
+			</div>
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover align-middle">
+					<thead class="table-light">
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Profile</th>
+							<th>Comment</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for testimonial in testimonials %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ testimonial.name }}</td>
+							<td>{{ testimonial.position }}</td>
+							<td>
+								{% if testimonial.profile %}
+									<img src="{{ testimonial.profile }}" alt="{{ testimonial.name }}" class="img-thumbnail" style="max-width: 80px; max-height: 80px;" />
+								{% else %}
+									<span class="text-muted">No Image</span>
+								{% endif %}
+							</td>
+							<td>{{ testimonial.comment }}</td>
+							<td class="action-btns d-flex justify-content-center gap-2">
+								<button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editTestimonialModal{{ testimonial.id }}">
+									<i class="bi bi-pencil-square"></i> Edit
+								</button>
+								<form method="post" action="{% url "dashboard:testimonial-delete" testimonial.id %}" style="display: inline">
+									{% csrf_token %}
+									<button type="submit" class="btn btn-danger btn-sm">
+										<i class="bi bi-trash"></i> Remove
+									</button>
+								</form>
+							</td>
+						</tr>
+						<!-- Edit Modal -->
+						<div class="modal fade" id="editTestimonialModal{{ testimonial.id }}" tabindex="-1" aria-labelledby="editTestimonialLabel{{ testimonial.id }}" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<form method="post" action="{% url "dashboard:testimonial-edit" testimonial.id %}" enctype="multipart/form-data">
+										{% csrf_token %}
+										<div class="modal-header">
+											<h5 class="modal-title" id="editTestimonialLabel{{ testimonial.id }}">Edit Testimonial</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<div class="mb-3">
+												<label for="testimonialName{{ testimonial.id }}" class="form-label">Name</label>
+												<input type="text" class="form-control" id="testimonialName{{ testimonial.id }}" name="name" value="{{ testimonial.name }}" required />
+											</div>
+											<div class="mb-3">
+												<label for="testimonialPosition{{ testimonial.id }}" class="form-label">Position</label>
+												<input type="text" class="form-control" id="testimonialPosition{{ testimonial.id }}" name="position" value="{{ testimonial.position }}" required />
+											</div>
+											<div class="mb-3">
+												<label for="testimonialProfile{{ testimonial.id }}" class="form-label">Profile Image</label>
+												<input type="file" class="form-control" id="testimonialProfile{{ testimonial.id }}" name="profile" accept="image/*" />
+												{% if testimonial.profile %}
+													<img src="{{ testimonial.profile }}" alt="{{ testimonial.name }}" class="img-thumbnail mt-2" style="max-width: 80px; max-height: 80px;" />
+												{% endif %}
+											</div>
+											<div class="mb-3">
+												<label for="testimonialComment{{ testimonial.id }}" class="form-label">Comment</label>
+												<textarea class="form-control" id="testimonialComment{{ testimonial.id }}" name="comment" rows="3" required>{{ testimonial.comment }}</textarea>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+											<button type="submit" class="btn btn-primary">Update</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						{% empty %}
+						<tr>
+							<td colspan="6" class="text-center">No testimonials found.</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<!-- Create Modal -->
+			<div class="modal fade" id="createTestimonialModal" tabindex="-1" aria-labelledby="createTestimonialLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<form method="post" action="{% url "dashboard:testimonial-create" %}" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="modal-header">
+								<h5 class="modal-title" id="createTestimonialLabel">Create Testimonial</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<div class="mb-3">
+									<label for="newTestimonialName" class="form-label">Name</label>
+									<input type="text" class="form-control" id="newTestimonialName" name="name" required />
+								</div>
+								<div class="mb-3">
+									<label for="newTestimonialPosition" class="form-label">Position</label>
+									<input type="text" class="form-control" id="newTestimonialPosition" name="position" required />
+								</div>
+								<div class="mb-3">
+									<label for="newTestimonialProfile" class="form-label">Profile Image</label>
+									<input type="file" class="form-control" id="newTestimonialProfile" name="profile" accept="image/*" required />
+								</div>
+								<div class="mb-3">
+									<label for="newTestimonialComment" class="form-label">Comment</label>
+									<textarea class="form-control" id="newTestimonialComment" name="comment" rows="3" required></textarea>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+								<button type="submit" class="btn btn-success">Create</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+	</body>
+</html>
