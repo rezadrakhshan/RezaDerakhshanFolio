@@ -9,7 +9,7 @@
     <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
     <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
     <link href="{% static 'assets/admin/index.css' %}" rel="stylesheet">
-        <link href="https://fonts.googleapis.com" rel="preconnect">
+        <link href="https://fonts.googleapis.com" *-+rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   </head>
@@ -23,7 +23,7 @@
         <li><a href="{% url "dashboard:educations" %}"><i class="bi bi-mortarboard"></i> Manage Education</a></li>
         <li><a href="{% url "dashboard:testimonials" %}"><i class="bi bi-chat-left-quote"></i> Manage Testimonial</a></li>
         <li><a href="{% url "dashboard:categories" %}"><i class="bi bi-tags"></i> Manage Category</a></li>
-        <li><a href="#"><i class="bi bi-kanban"></i> Manage Project</a></li>
+        <li><a href="{% url "dashboard:projects" %}"><i class="bi bi-kanban"></i> Manage Project</a></li>
         <li><a href="{% url "dashboard:logout" %}"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
       </ul>
     </div>

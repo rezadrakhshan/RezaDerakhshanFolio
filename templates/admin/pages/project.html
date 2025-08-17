@@ -1,0 +1,215 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<title>Manage Projects | Admin Panel</title>
+	<link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/css/main.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/admin/index.css' %}" rel="stylesheet" />
+	<link href="{% static 'assets/admin/pages.css' %}" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com" rel="preconnect" />
+	<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+	<div class="skill-panel-card">
+		{% if messages %}
+		<div class="notification-box mb-3">
+			{% for message in messages %}
+				<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+		<a href="{% url 'dashboard:index' %}" class="btn btn-outline-primary back-btn">
+			<i class="bi bi-arrow-left"></i> Back to Home
+		</a>
+		<div class="skill-panel-title">Manage Projects</div>
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<div></div>
+			<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createProjectModal">
+				<i class="bi bi-plus-circle"></i> Create Project
+			</button>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-bordered table-hover align-middle">
+				<thead class="table-light">
+					<tr>
+						<th>#</th>
+						<th>Title</th>
+						<th>Category</th>
+						<th>Description</th>
+						<th>Client</th>
+						<th>Date</th>
+						<th>URL</th>
+						<th>Images</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for project in projects %}
+					<tr>
+						<td>{{ forloop.counter }}</td>
+						<td>{{ project.title }}</td>
+						<td>{{ project.category.title }}</td>
+						<td>{{ project.description|truncatewords:15 }}</td>
+						<td>{{ project.client }}</td>
+						<td>{{ project.date }}</td>
+						<td>
+							{% if project.url %}
+								<a href="{{ project.url }}" target="_blank">Link</a>
+							{% else %}
+								<span class="text-muted">No URL</span>
+							{% endif %}
+						</td>
+						<td>
+							{% if project.images_url %}
+								<div class="d-flex flex-wrap gap-1">
+									{% for img in project.images_url %}
+										<img src="{{ img }}" alt="{{ project.title }}" class="img-thumbnail" style="max-width: 60px; max-height: 60px;" />
+									{% endfor %}
+								</div>
+							{% else %}
+								<span class="text-muted">No Images</span>
+							{% endif %}
+						</td>
+						<td class="action-btns d-flex justify-content-center gap-2">
+							<button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProjectModal{{ project.slug }}">
+								<i class="bi bi-pencil-square"></i> Edit
+							</button>
+							<form method="post" action="{% url "dashboard:project-delete" project.slug %}" style="display: inline">
+								{% csrf_token %}
+								<button type="submit" class="btn btn-danger btn-sm">
+									<i class="bi bi-trash"></i> Remove
+								</button>
+							</form>
+						</td>
+					</tr>
+					<!-- Edit Modal -->
+					<div class="modal fade" id="editProjectModal{{ project.slug }}" tabindex="-1" aria-labelledby="editProjectLabel{{ project.slug }}" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<form method="post" action="{% url "dashboard:project-edit" project.slug %}" enctype="multipart/form-data">
+									{% csrf_token %}
+									<div class="modal-header">
+										<h5 class="modal-title" id="editProjectLabel{{ project.slug }}">Edit Project</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="mb-3">
+											<label class="form-label">Title</label>
+											<input type="text" class="form-control" name="title" value="{{ project.title }}" required />
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Category</label>
+											<select class="form-control" name="category" required>
+												{% for cat in categories %}
+													<option value="{{ cat.slug }}" {% if cat.slug == project.category.slug %}selected{% endif %}>{{ cat.title }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Description</label>
+											<textarea class="form-control" name="description" rows="3" required>{{ project.description }}</textarea>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Client</label>
+											<input type="text" class="form-control" name="client" value="{{ project.client }}" required />
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Date</label>
+											<input type="date" class="form-control" name="date" value="{{ project.date|date:'Y-m-d' }}" required />
+										</div>
+										<div class="mb-3">
+											<label class="form-label">URL</label>
+											<input type="url" class="form-control" name="url" value="{{ project.url }}" />
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Images</label>
+											<input type="file" class="form-control" name="images_url" accept="image/*" multiple />
+											{% if project.images_url %}
+												<div class="d-flex flex-wrap gap-1 mt-2">
+													{% for img in project.images_url %}
+														<img src="{{ img }}" alt="{{ project.title }}" class="img-thumbnail" style="max-width: 60px; max-height: 60px;" />
+													{% endfor %}
+												</div>
+											{% endif %}
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+										<button type="submit" class="btn btn-primary">Update</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					{% empty %}
+					<tr>
+						<td colspan="9" class="text-center">No projects found.</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<!-- Create Modal -->
+		<div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<form method="post" action="{% url "dashboard:project-create" %}" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="modal-header">
+							<h5 class="modal-title" id="createProjectLabel">Create Project</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="mb-3">
+								<label class="form-label">Title</label>
+								<input type="text" class="form-control" name="title" required />
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Category</label>
+								<select class="form-control" name="category" required>
+									{% for cat in categories %}
+										<option value="{{ cat.slug }}">{{ cat.title }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Description</label>
+								<textarea class="form-control" name="description" rows="3" required></textarea>
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Client</label>
+								<input type="text" class="form-control" name="client" required />
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Date</label>
+								<input type="date" class="form-control" name="date" required />
+							</div>
+							<div class="mb-3">
+								<label class="form-label">URL</label>
+								<input type="url" class="form-control" name="url" />
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Images</label>
+								<input type="file" class="form-control" name="images_url" accept="image/*" multiple />
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-success">Create</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -27,4 +27,8 @@ urlpatterns = [
     path("testimonials/create/", views.testimonial_create_page, name="testimonial-create"),
     path("testimonials/edit/<int:testimonial_id>/", views.testimonial_edit_page, name="testimonial-edit"),
     path("testimonials/delete/<int:testimonial_id>/", views.testimonial_delete_page, name="testimonial-delete"),
+    path("projects/", views.project_page, name="projects"),
+    path("projects/create/", views.project_create_page, name="project-create"),
+    path("projects/edit/<str:project_id>/", views.project_edit_page, name="project-edit"),
+    path("projects/delete/<str:project_id>/", views.project_delete_page, name="project-delete"),
 ]

@@ -323,10 +323,8 @@ def testimonial_edit_page(request, testimonial_id):
                     file_key = file_url.replace(bucket_prefix, "")
 
                     s3_client.delete_object(
-                        Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                        Key=file_key
+                        Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_key
                     )
-
 
                     file_name = f"testimonials/{uuid.uuid4()}_{profile_image.name}"
 
@@ -347,6 +345,7 @@ def testimonial_edit_page(request, testimonial_id):
             except Exception as e:
                 return JsonResponse({"error": str(e)}, status=500)
 
+
 @login_required(login_url="dashboard:login")
 def testimonial_delete_page(request, testimonial_id):
     testimonial = Testimonial.objects.get(id=testimonial_id)
@@ -354,13 +353,14 @@ def testimonial_delete_page(request, testimonial_id):
         try:
             s3_client = get_s3_client()
             file_url = testimonial.profile
-            bucket_prefix = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/"
+            bucket_prefix = (
+                f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/"
+            )
 
             file_key = file_url.replace(bucket_prefix, "")
 
             s3_client.delete_object(
-                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                Key=file_key
+                Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_key
             )
 
             testimonial.delete()
@@ -369,3 +369,123 @@ def testimonial_delete_page(request, testimonial_id):
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
+
+@login_required(login_url="dashboard:login")
+def project_page(request):
+    projects = Project.objects.all()
+    categories = Category.objects.all()
+
+    return render(
+        request,
+        "admin/pages/project.html",
+        {"projects": projects, "categories": categories},
+    )
+
+
+@login_required(login_url="dashboard:login")
+def project_create_page(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        category = request.POST.get("category")
+        client = request.POST.get("client")
+        date = request.POST.get("date")
+        url = request.POST.get("url")
+        images = request.FILES.getlist("images_url")
+        if title and description and category and images:
+            try:
+                s3_client = get_s3_client()
+                file_urls = []
+                for image in images:
+                    file_name = f"projects/{uuid.uuid4()}_{image.name}"
+                    s3_client.upload_fileobj(
+                        image, settings.AWS_STORAGE_BUCKET_NAME, file_name
+                    )
+                    file_url = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/{file_name}"
+                    file_urls.append(file_url)
+                project = Project(
+                    title=title,
+                    description=description,
+                    category=Category.objects.get(slug=category),
+                    client=client,
+                    date=date,
+                    url=url,
+                    images_url=file_urls,
+                )
+                project.save()
+                messages.success(request, "Project created successfully")
+                return redirect("dashboard:projects")
+            except Exception as e:
+                messages.error(request, f"Error creating project: {str(e)}")
+                return redirect("dashboard:project-create")
+
+
+@login_required(login_url="dashboard:login")
+def project_edit_page(request, project_id):
+    project = Project.objects.get(slug=project_id)
+    if request.method == "POST":
+        title = request.POST.get("title")
+        description = request.POST.get("description")
+        category = request.POST.get("category")
+        client = request.POST.get("client")
+        date = request.POST.get("date")
+        url = request.POST.get("url") 
+        images = request.FILES.getlist("images_url")
+        if title and description and category:
+            try:
+                s3_client = get_s3_client()
+                file_urls = project.images_url
+                if images:
+                    for image in file_urls:
+                        file_name = image.replace(
+                            f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/",
+                            "",
+                        )
+                        s3_client.delete_object(
+                            Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name
+                        )
+                    file_urls = []
+                    for image in images:
+                        file_name = f"projects/{uuid.uuid4()}_{image.name}"
+                        s3_client.upload_fileobj(
+                            image, settings.AWS_STORAGE_BUCKET_NAME, file_name
+                        )
+                        file_url = f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/{file_name}"
+                        file_urls.append(file_url)
+                project.title = title
+                project.description = description
+                project.category = Category.objects.get(slug=category)
+                project.client = client
+                project.date = date
+                project.url = url
+                project.images_url = file_urls
+                project.save()
+                messages.success(request, "Project updated successfully")
+                return redirect("dashboard:projects")
+            except Exception as e:
+                messages.error(request, f"Error updating project: {str(e)}")
+                return redirect("dashboard:project-edit", project_id=project.slug)
+
+
+@login_required(login_url="dashboard:login")
+def project_delete_page(request, project_id):
+    project = Project.objects.get(slug=project_id)
+    if request.method == "POST":
+        try:
+            s3_client = get_s3_client()
+            file_urls = project.images_url
+            for image in file_urls:
+                file_name = image.replace(
+                    f"https://storage.c2.liara.space/{settings.AWS_STORAGE_BUCKET_NAME}/",
+                    "",
+                )
+                s3_client.delete_object(
+                    Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name
+                )
+            project.delete()
+            messages.success(request, "Project deleted successfully")
+            return redirect("dashboard:projects")
+        except Exception as e:
+            messages.error(request, f"Error deleting project: {str(e)}")
+            return redirect("dashboard:projects")
