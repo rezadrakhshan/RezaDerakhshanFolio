@@ -265,10 +265,10 @@ Take a closer look at what I’ve been building.</p>
             {% for i in projects %}
             <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-{{i.category.title}}">
               <div class="portfolio-content h-100">
-                <img src="{{i.image.all.0.image.url}}" class="img-fluid" alt="">
+                <img src="{{ i.images_url.0 }}" class="img-fluid" alt="">
                 <div class="portfolio-info">
                   <p>{{i.title}}</p>
-                  <a href="{{i.image.all.0.image.url}}" title="{{i.title}}" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
+                  <a href="{{ i.images_url.0 }}" data-gallery="portfolio-gallery-app" class="glightbox preview-link"><i class="bi bi-zoom-in"></i></a>
                   <a href="{% url "app:project-detail" i.slug %}" title="More Details" class="details-link"><i class="bi bi-link-45deg"></i></a>
                 </div>
               </div>

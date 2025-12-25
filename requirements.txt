@@ -8,3 +8,4 @@ dj-database-url
 gunicorn
 python-dotenv
 whitenoise
+boto3
