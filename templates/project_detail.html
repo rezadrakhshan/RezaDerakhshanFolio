@@ -81,9 +81,9 @@
 
               <div class="swiper-wrapper align-items-center">
 
-                {% for i in target.image.all %}
+                {% for i in target.images_url %}
                 <div class="swiper-slide">
-                  <img src="{{i.image.url}}" alt="">
+                  <img src="{{i}}" alt="">
                 </div>
                 {% endfor %}
 
